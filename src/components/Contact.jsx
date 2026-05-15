@@ -1,12 +1,63 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import { Clock, Mail, MapPin, Phone, Send } from "lucide-react";
 import { restaurantInfo } from "../data/restaurantData";
 
 function Contact() {
-  const handleSubmit = (event) => {
+  const [status, setStatus] = useState({
+    loading: false,
+    success: "",
+    error: ""
+  });
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    alert("Thank you! Your message has been received.");
-    event.target.reset();
+
+    setStatus({
+      loading: true,
+      success: "",
+      error: ""
+    });
+
+    const formData = new FormData(event.target);
+
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      subject: formData.get("subject"),
+      message: formData.get("message")
+    };
+
+    try {
+      const response = await fetch("/api/send-message", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Failed to send message.");
+      }
+
+      setStatus({
+        loading: false,
+        success: "Message sent successfully! We will contact you soon.",
+        error: ""
+      });
+
+      event.target.reset();
+    } catch (error) {
+      setStatus({
+        loading: false,
+        success: "",
+        error: "Message could not be sent. Please try again later."
+      });
+    }
   };
 
   return (
@@ -69,15 +120,17 @@ function Contact() {
                     </h4>
 
                     <p className="mt-1 text-sm leading-6 text-stone-600">
-                      Main Road, Near Railway Station, Tenali, Andhra Pradesh 522201, India
+                      {restaurantInfo.address}
                     </p>
                   </div>
                 </div>
               </div>
 
               <iframe
-                title="Royal Spice Restaurant Location"
-                src="https://www.google.com/maps?q=Main%20Road%2C%20Near%20Railway%20Station%2C%20Tenali%2C%20Andhra%20Pradesh%20522201%2C%20India&output=embed"
+                title={`${restaurantInfo.name} Restaurant Location`}
+                src={`https://www.google.com/maps?q=${encodeURIComponent(
+                  restaurantInfo.address
+                )}&output=embed`}
                 className="h-72 w-full border-0"
                 loading="lazy"
                 allowFullScreen
@@ -97,19 +150,42 @@ function Contact() {
             </h3>
 
             <div className="mt-8 grid gap-5 md:grid-cols-2">
-              <Input label="Name" type="text" placeholder="Your name" />
-              <Input label="Email" type="email" placeholder="Your email" />
-              <Input label="Phone" type="tel" placeholder="Your phone number" />
+              <Input
+                label="Name"
+                name="name"
+                type="text"
+                placeholder="Your name"
+              />
+
+              <Input
+                label="Email"
+                name="email"
+                type="email"
+                placeholder="Your email"
+              />
+
+              <Input
+                label="Phone"
+                name="phone"
+                type="tel"
+                placeholder="Your phone number"
+              />
 
               <div>
                 <label className="mb-2 block font-semibold text-stone-700">
                   Subject
                 </label>
-                <select className="w-full rounded-2xl border border-orange-100 bg-cream px-4 py-4 outline-none transition focus:border-primary">
-                  <option>Table Booking</option>
-                  <option>Food Order</option>
-                  <option>Catering</option>
-                  <option>Party Order</option>
+
+                <select
+                  name="subject"
+                  required
+                  className="w-full rounded-2xl border border-orange-100 bg-cream px-4 py-4 outline-none transition focus:border-primary"
+                >
+                  <option value="Table Booking">Table Booking</option>
+                  <option value="Food Order">Food Order</option>
+                  <option value="Catering">Catering</option>
+                  <option value="Party Order">Party Order</option>
+                  <option value="General Enquiry">General Enquiry</option>
                 </select>
               </div>
             </div>
@@ -118,7 +194,9 @@ function Contact() {
               <label className="mb-2 block font-semibold text-stone-700">
                 Message
               </label>
+
               <textarea
+                name="message"
                 required
                 rows="6"
                 placeholder="Write your message..."
@@ -126,8 +204,25 @@ function Contact() {
               ></textarea>
             </div>
 
-            <button className="mt-6 w-full rounded-full bg-primary px-7 py-4 font-bold text-white shadow-lg transition hover:-translate-y-1 hover:bg-secondary">
-              Send Message
+            {status.success && (
+              <div className="mt-5 rounded-2xl bg-green-50 px-5 py-4 text-sm font-semibold text-green-700">
+                {status.success}
+              </div>
+            )}
+
+            {status.error && (
+              <div className="mt-5 rounded-2xl bg-red-50 px-5 py-4 text-sm font-semibold text-red-700">
+                {status.error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={status.loading}
+              className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 font-bold text-white shadow-lg transition hover:-translate-y-1 hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              <Send size={18} />
+              {status.loading ? "Sending Message..." : "Send Message"}
             </button>
           </motion.form>
         </div>
@@ -151,11 +246,15 @@ function InfoItem({ icon: Icon, title, value }) {
   );
 }
 
-function Input({ label, type, placeholder }) {
+function Input({ label, name, type, placeholder }) {
   return (
     <div>
-      <label className="mb-2 block font-semibold text-stone-700">{label}</label>
+      <label className="mb-2 block font-semibold text-stone-700">
+        {label}
+      </label>
+
       <input
+        name={name}
         required
         type={type}
         placeholder={placeholder}
