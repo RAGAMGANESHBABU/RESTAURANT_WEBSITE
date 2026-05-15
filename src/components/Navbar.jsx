@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react";
 import { Menu, X, UtensilsCrossed } from "lucide-react";
 import { navLinks, restaurantInfo } from "../data/restaurantData";
+import { getWhatsAppLink } from "../utils/whatsapp";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
 
+  const whatsappLink = getWhatsAppLink(
+    restaurantInfo.whatsappNumber,
+    restaurantInfo.name
+  );
+
   useEffect(() => {
     const handleScroll = () => {
-      const sections = navLinks.map((link) => document.getElementById(link.href));
+      const sections = navLinks.map((link) =>
+        document.getElementById(link.href)
+      );
 
       sections.forEach((section) => {
         if (!section) return;
@@ -34,13 +42,6 @@ function Navbar() {
   const scrollToSection = (sectionId) => {
     setIsOpen(false);
     document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const openWhatsApp = () => {
-    window.open(
-      `https://wa.me/${restaurantInfo.whatsappNumber}?text=Hi%20${restaurantInfo.name},%20I%20want%20to%20place%20an%20order.`,
-      "_blank"
-    );
   };
 
   return (
@@ -74,12 +75,14 @@ function Navbar() {
             </button>
           ))}
 
-          <button
-            onClick={openWhatsApp}
+          <a
+            href={whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
             className="rounded-full bg-primary px-6 py-3 text-sm font-bold text-white shadow-lg shadow-orange-900/20 transition hover:-translate-y-0.5 hover:bg-secondary"
           >
             Order Now
-          </button>
+          </a>
         </div>
 
         <button
@@ -103,12 +106,15 @@ function Navbar() {
               </button>
             ))}
 
-            <button
-              onClick={openWhatsApp}
-              className="rounded-full bg-primary px-6 py-3 font-bold text-white"
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setIsOpen(false)}
+              className="rounded-full bg-primary px-6 py-3 text-center font-bold text-white"
             >
               Order Now
-            </button>
+            </a>
           </div>
         </div>
       )}

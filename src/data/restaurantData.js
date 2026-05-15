@@ -10,8 +10,8 @@ import {
 export const restaurantInfo = {
   name: "Royal Spice",
   tagline: "Authentic Flavours. Premium Dining.",
-  phone: "+91 98765 43210",
-  whatsappNumber: "919876543210",
+  phone: "+91 9346308422",
+  whatsappNumber: "919346308422",
   email: "hello@royalspice.com",
   address: "Main Road, Near Railway Station, Tenali, Andhra Pradesh 522201, India",
   openingHours: "Mon - Sun: 10:00 AM - 11:00 PM"

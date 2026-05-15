@@ -1,14 +1,13 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Star } from "lucide-react";
 import { restaurantInfo, stats } from "../data/restaurantData";
+import { getWhatsAppLink } from "../utils/whatsapp";
 
 function Hero() {
-  const openWhatsApp = () => {
-    window.open(
-      `https://wa.me/${restaurantInfo.whatsappNumber}?text=Hi%20${restaurantInfo.name},%20I%20want%20to%20place%20an%20order.`,
-      "_blank"
-    );
-  };
+  const whatsappLink = getWhatsAppLink(
+    restaurantInfo.whatsappNumber,
+    restaurantInfo.name
+  );
 
   return (
     <section
@@ -53,12 +52,14 @@ function Hero() {
               />
             </button>
 
-            <button
-              onClick={openWhatsApp}
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-4 font-bold text-white shadow-xl shadow-orange-950/30 transition hover:-translate-y-1 hover:bg-secondary"
             >
               Order on WhatsApp
-            </button>
+            </a>
           </div>
 
           <div className="mt-10 grid max-w-2xl grid-cols-3 gap-4">
