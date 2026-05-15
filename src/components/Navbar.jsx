@@ -81,7 +81,7 @@ function Navbar() {
             rel="noopener noreferrer"
             className="rounded-full bg-primary px-6 py-3 text-sm font-bold text-white shadow-lg shadow-orange-900/20 transition hover:-translate-y-0.5 hover:bg-secondary"
           >
-            Order Now
+            Get Website Like This
           </a>
         </div>
 
@@ -113,7 +113,7 @@ function Navbar() {
               onClick={() => setIsOpen(false)}
               className="rounded-full bg-primary px-6 py-3 text-center font-bold text-white"
             >
-              Order Now
+              Get Website Like This
             </a>
           </div>
         </div>

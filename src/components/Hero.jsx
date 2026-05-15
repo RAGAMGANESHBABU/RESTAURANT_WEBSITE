@@ -58,7 +58,7 @@ function Hero() {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-4 font-bold text-white shadow-xl shadow-orange-950/30 transition hover:-translate-y-1 hover:bg-secondary"
             >
-              Order on WhatsApp
+              Request Similar Website
             </a>
           </div>
 
